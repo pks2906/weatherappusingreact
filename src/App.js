@@ -1,31 +1,58 @@
+import "./App.css";
+import { useEffect, useState } from "react";
+import { forecast } from "./forecastApi";
 
-import './App.css';
+function App() {
+  const [state, setState] = useState({
+    latitude: 0,
+    longitude: 85.35,
+  });
+  const [forecastState, setForecastState] = useState({});
 
+  const [hourlyForecast, setHourlyForecast] = useState([]);
 
-function App() { 
- const [coordinates, _setCoordinates] = UseState ({})
-  let latitude = 23.0
-  let longitude = 95.0
+  useEffect(() => {
+    window.navigator.geolocation.getCurrentPosition((position) =>
+      setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    );
+  }, []);
 
+  useEffect(() => {
+    forecast(state.latitude, state.longitude).then((response) => {
+      let hourlyForecastTemp = [];
+      for (let i = 0; i < response.data.hourly.time.length; i++) {
+        hourlyForecastTemp.push({
+          time: response.data.hourly.time[i],
+          temperature: response.data.hourly.temperature_2m[i],
+        });
+      }
+      setForecastState(response.data);
+      setHourlyForecast([...hourlyForecastTemp]);
+    });
+  }, [state]);
 
   return (
     <div>
-   <h1> This is a weather application.</h1>
-   <h6>The latitude is: {coordinates.latitude} and longitude is {longitude}</h6>
-   <button onClick= {
-    (_e) => { 
-      
-      
-    
-      forecastApi (latitude, longitude).then( () => {
-
-      })
-
-      
-    }} > Show Forecast</button>
-   
-   </div>
+      <h1>Welcome Pratik!</h1>
+      <h2>
+        Today's forecast for Lat: {state.latitude} and Long: {state.longitude}{" "}
+        is:
+      </h2>
+      <div>
+        <h5>Your elevation is: {forecastState.elevation} meters</h5>
+        {hourlyForecast.map((forecastInfo) => {
+          return 
+           
+          ;
+        })}
+      </div>
+    </div>
   );
 }
 
 export default App;
+
+// const [state, functionToChangeState] = useState(initialValueOfState)
